@@ -25,27 +25,36 @@ if ( matlabpool('size') == 0 )
 end
 
 %% Define parameters
-iterationsPerCore = 10;
+max_iterationsPerCore = 15;
 minNumberOfSignature = 1;
 maxNumberOfSignature = 15;
 stability = zeros(maxNumberOfSignature, 1);
 reconstructionError = zeros(maxNumberOfSignature, 1);
-inputFile = 'input/21_WTSI_BRCA_whole_genome_substitutions.mat';
-allOutputFile = 'output/res_example_2_all_21_WTSI_BRCA_whole_genome_substitutions.mat';
+inputFile = 'input/GDAC.tcga.coadread.noPOLE.noMSIH.LEFT.norect.norectosig.mat';
+allOutputFile = 'output/res_example_2_all_GDAC.tcga.coadread.noPOLE.noMSIH.LEFT.norect.norectosig.mat';
 
 %% Sequentially deciphering signatures between minNumberOfSignature and maxNumberOfSignature
-for totalSignatures = minNumberOfSignature : maxNumberOfSignature
+for iterationsPerCore = 1 : max_iterationsPerCore
+    allOutputFile = ['output/res_example_2_all_GDAC.tcga.coadread.noPOLE.noMSIH.LEFT.norect.norectosig_iterations_' num2str(iterationsPerCore) '_substitutions.mat'];
+    stability = zeros(maxNumberOfSignature, 1);
+    reconstructionError = zeros(maxNumberOfSignature, 1);
+    for totalSignatures = minNumberOfSignature : maxNumberOfSignature
     
     % Decipher the signatures of mutational processes from catalogues of mutations
     [input allProcesses allExposures idx processes exposures processStab processStabAvg] = ...
         decipherMutationalProcesses(iterationsPerCore, totalSignatures, inputFile, ...
-            ['output/res_example_2_21_WTSI_BRCA_whole_genome_substitutions_' num2str(totalSignatures) '_signatures.mat'] );
+            ['output/res_example_2100_WTSI_BRCA_whole_exome_substitutions_strand_bias_substitutions_' num2str(totalSignatures) '_iterations_' num2str(iterationsPerCore) '_signatures.mat'] );
     
     % Record the stability and average Frobenius reconstruction error
     stability(totalSignatures-minNumberOfSignature+1) = mean(processStabAvg);
     reconstructionError(totalSignatures-minNumberOfSignature+1) = norm(input.originalGenomes - processes*exposures, 'fro');
     
+    end
+    %% Some versions of MATLAB plotyy has a bug under linux with -nodisplay -nosplash -nodesktop options
+  plotSignatureStabilityAndReconstruction(minNumberOfSignature:maxNumberOfSignature, stability, reconstructionError, input);
+save(allOutputFile);
 end
+
 
 %% Plotting the stability and average Frobenius reconstruction error
 try %% Some versions of MATLAB plotyy has a bug under linux with -nodisplay -nosplash -nodesktop options

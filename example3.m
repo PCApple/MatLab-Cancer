@@ -18,7 +18,7 @@ addpath('plotting/');
 clc;
 
 %% Define parameters
-outputFileName = 'output/res_example_1_21_WTSI_BRCA_whole_genome_substitutions.mat';
+outputFileName = 'output/res_Hnc_HPVneg_FIRE_gdac_bcgsc_Maf_substitutions_10_iterations_10_signatures.mat';
 if ( exist(outputFileName, 'file') == 0)
    disp(['File ' outputFileName ' cannot be found! Please run example1.m prior to running example3.m!']);
    return;

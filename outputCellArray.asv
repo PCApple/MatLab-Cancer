@@ -1,0 +1,13 @@
+function [ output_args ] = outputCellArray( cellArray )
+%OUTPUTCELLARRAY Summary of this function goes here
+%   Detailed explanation goes here
+cellSize = size(cellArray)
+for i = drange(1:cellSize(1)-1)
+    matrix = mat2cell(cellArray(i))
+    xlswrite('noutput/cosine ' num2str(i) ' to ' num2str(i+1), '.xlsx')
+    xlswrite(
+end
+
+
+end
+

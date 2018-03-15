@@ -1,0 +1,1 @@
+cordinates = analyzeData(processes,AlexSignatures,'Right VS Ale fixed.xls', 0.8);
